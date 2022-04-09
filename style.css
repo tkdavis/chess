@@ -51,4 +51,5 @@ body {
 
 canvas {
   margin-top: 70px;
+	border: 1px solid #000;
 }

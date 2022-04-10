@@ -1,3 +1,4 @@
+import Piece from './Piece.js';
 import Square from './Square.js';
 
 export default class Board {
@@ -12,14 +13,18 @@ export default class Board {
     // this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
     this.board = [];
     this.squareSize = 70;
-    this.colors = {white: '#ddbc93', black: '#955431'};
+    this.palettes = {
+      brown: {white: '#ddbc93', black: '#955431'},
+      green: {white: '#eeeed2', black: '#769655'}
+    }
+    this.colors = this.palettes.green;
     this.pieceTable = {
       k: '\u{265A}',
       q: '\u{265B}',
       r: '\u{265C}',
       b: '\u{265D}',
       n: '\u{265E}',
-      p: '\u{265F}',
+      p: '\u{265F}'
     }
   }
 
@@ -50,10 +55,17 @@ export default class Board {
   generatePieces() {
     this.ctx.font = '48px serif';
     this.board.forEach( (rank, x) => {
-      rank.forEach( (piece, y) => {
-        if (this.pieceTable.hasOwnProperty(piece.toLowerCase())) {
-          this.ctx.fillStyle = piece === piece.toLowerCase() ? '#000' : '#fff';
-          this.ctx.fillText(this.pieceTable[piece.toLowerCase()], y * this.squareSize + 10, x * this.squareSize + 50);
+      rank.forEach( (pieceFEN, y) => {
+        if (this.pieceTable.hasOwnProperty(pieceFEN.toLowerCase())) {
+          let piece = new Piece({
+            ctx: this.ctx,
+            color: pieceFEN === pieceFEN.toLowerCase() ? 'black' : 'white',
+            pieceType: this.pieceTable[pieceFEN.toLowerCase()],
+            x,
+            y,
+            squareSize: this.squareSize
+          });
+          piece.draw();
         }
       })
     })

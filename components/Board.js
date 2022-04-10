@@ -33,9 +33,21 @@ export default class Board {
   }
 
   generateBoard() {
-    this.board = this.fen.split('/').map((rank, i) => (
-      rank.split('').map( square => ( !isNaN(square) ? '' : square ))
-    ))
+    this.fen.split('/').forEach((rank, i) => {
+      let newRank = [];
+      rank.split('').forEach((square, j) => {
+        if (j < 8) {
+          if (!isNaN(square)) {
+            for(let k = 0; k < square; k++) {
+              newRank.push('');
+            }
+            return;
+          }
+          newRank.push(square);
+        }
+      });
+      this.board.push(newRank);
+    })
 
     this.generateSquares();
     this.generatePieces();

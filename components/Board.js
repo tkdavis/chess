@@ -2,7 +2,8 @@ import Piece from './Piece.js';
 import Square from './Square.js';
 
 export default class Board {
-  constructor(ctx) {
+  constructor(canvas, ctx) {
+    this.canvas = canvas;
     this.ctx = ctx;
     /*
     *  Uses FEN
@@ -12,6 +13,8 @@ export default class Board {
     // this.fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
     // this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
     this.board = [];
+    this.pieces = [];
+    this.draggablePiece;
     this.squareSize = 70;
     this.palettes = {
       brown: {white: '#ddbc93', black: '#955431'},
@@ -26,6 +29,9 @@ export default class Board {
       n: '\u{265E}',
       p: '\u{265F}'
     }
+    this.canvas.onmousedown = this.selectPieceToMove
+    this.canvas.onmousemove = this.dragPiece
+    this.canvas.onmouseup = this.dropPiece
   }
 
   initialize() {
@@ -33,10 +39,10 @@ export default class Board {
   }
 
   generateBoard() {
-    this.fen.split('/').forEach((rank, i) => {
+    this.fen.split('/').forEach((rank, y) => {
       let newRank = [];
-      rank.split('').forEach((square, j) => {
-        if (j < 8) {
+      rank.split('').forEach((square, x) => {
+        if (x < 8) {
           if (!isNaN(square)) {
             for(let k = 0; k < square; k++) {
               newRank.push('');
@@ -66,8 +72,9 @@ export default class Board {
 
   generatePieces() {
     this.ctx.font = '48px serif';
-    this.board.forEach( (rank, x) => {
-      rank.forEach( (pieceFEN, y) => {
+    this.board.forEach( (rank, y) => {
+      let newRank = [];
+      rank.forEach( (pieceFEN, x) => {
         if (this.pieceTable.hasOwnProperty(pieceFEN.toLowerCase())) {
           let piece = new Piece({
             ctx: this.ctx,
@@ -78,8 +85,39 @@ export default class Board {
             squareSize: this.squareSize
           });
           piece.draw();
+
+          newRank.push(piece);
         }
       })
+      this.pieces.push(newRank);
     })
+  }
+  
+  /* TODO: Breakout these drag and drop methods into seperate module. */
+  selectPieceToMove = e => {
+    let selectPosition = {x: Math.floor(e.offsetX / 70), y: Math.floor(e.offsetY / 70)};
+    this.draggablePiece = this.pieces[selectPosition.y][selectPosition.x];
+    // TODO:
+    // remove piece from FEN string and generate pieces (again)
+  }
+
+  dragPiece = e => {
+    if (this.draggablePiece) {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.draggablePiece.x = (e.offsetX / 70) - 0.5;
+      this.draggablePiece.y = (e.offsetY / 70) - 0.5;
+      this.generateSquares();
+      this.draggablePiece.draw();
+      this.generatePieces();
+    }
+  }
+
+  dropPiece = e => {
+    if (this.draggablePiece) {
+      // TODO:
+      // check if legal move
+      // snap piece to position by updating board fen!
+      this.draggablePiece = '';
+    }
   }
 }

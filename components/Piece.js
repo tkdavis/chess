@@ -6,15 +6,16 @@ export default class Piece {
     this.x = x;
     this.y = y;
     this.squareSize = squareSize;
-    this.offset = {x: 50, y: 10};
+    this.offset = {x: 10, y: 50};
+    this.draggable = true;
   }
 
   draw() {
     this.ctx.fillStyle = this.color;
     this.ctx.fillText(
       this.pieceType,
-      this.y * this.squareSize + this.offset.y,
-      this.x * this.squareSize + this.offset.x
+      this.x * this.squareSize + this.offset.x,
+      this.y * this.squareSize + this.offset.y
     );
 
     // Add border to white pieces
@@ -23,8 +24,8 @@ export default class Piece {
       this.ctx.strokeStyle = '#00000096';
       this.ctx.strokeText(
         this.pieceType,
-        this.y * this.squareSize + this.offset.y,
-        this.x * this.squareSize + this.offset.x
+        this.x * this.squareSize + this.offset.x,
+        this.y * this.squareSize + this.offset.y
       );
     }
   }

@@ -35,10 +35,6 @@ export default class Board {
   }
 
   initialize() {
-    this.generateBoard();
-  }
-
-  generateBoard() {
     this.board = [];
     this.fen.split('/').forEach((rank, y) => {
       let newRank = [];
@@ -55,9 +51,7 @@ export default class Board {
       });
       this.board.push(newRank);
     })
-
-    this.generateSquares();
-    this.generatePieces();
+    this.draw();
   }
 
   generateSquares() {
@@ -97,26 +91,29 @@ export default class Board {
       this.pieces.push(newRank);
     })
   }
-  
-  /* TODO: Breakout these drag and drop methods into seperate module. */
+
+  draw() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.generateSquares();
+    this.generatePieces();
+    if (this.draggablePiece) {
+      this.draggablePiece.draw();
+    }
+  }
+
   selectPieceToMove = e => {
     let selectPosition = {x: Math.floor(e.offsetX / 70), y: Math.floor(e.offsetY / 70)};
     this.draggablePiece = this.pieces[selectPosition.y][selectPosition.x];
     this.draggablePiece.previousPosition.x = this.draggablePiece.x
     this.draggablePiece.previousPosition.y = this.draggablePiece.y
     this.board[this.draggablePiece.y][this.draggablePiece.x] = '';
-    // TODO:
-    // remove piece from FEN string and generate pieces (again)
   }
 
   dragPiece = e => {
     if (this.draggablePiece) {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;
       this.draggablePiece.y = (e.offsetY / 70) - 0.5;
-      this.generateSquares();
-      this.draggablePiece.draw();
-      this.generatePieces();
+      this.draw();
     }
   }
 
@@ -127,9 +124,7 @@ export default class Board {
       this.draggablePiece.x = Math.round(this.draggablePiece.x);
       this.draggablePiece.y = Math.round(this.draggablePiece.y);
       this.board[this.draggablePiece.y][this.draggablePiece.x] = this.draggablePiece.fenLetter;
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.generateSquares();
-      this.generatePieces();
+      this.draw();
       this.draggablePiece = '';
     }
   }

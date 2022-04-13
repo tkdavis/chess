@@ -1,13 +1,15 @@
 export default class Piece {
-  constructor({ctx, color, pieceType, x, y, squareSize}) {
+  constructor({ctx, color, pieceType, fenLetter, x, y, squareSize}) {
     this.ctx = ctx;
     this.color = color;
     this.pieceType = pieceType;
+    this.fenLetter = fenLetter;
     this.x = x;
     this.y = y;
     this.squareSize = squareSize;
     this.offset = {x: 10, y: 50};
     this.draggable = true;
+    this.previousPosition = {x: '', y: ''}
   }
 
   draw() {

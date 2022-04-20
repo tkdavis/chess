@@ -22,10 +22,18 @@ export default class Piece {
 
     // Add border to white pieces
     if (this.color === 'white') {
-      this.ctx.lineWidth = 2;
-      this.ctx.strokeStyle = '#00000096';
-      this.ctx.strokeText(
-        this.pieceType,
+      this.pieceTable = {
+        K: '\u{2654}',
+        Q: '\u{2655}',
+        R: '\u{2656}',
+        B: '\u{2657}',
+        N: '\u{2658}',
+        P: '\u{2659}'
+      }
+
+      this.ctx.fillStyle = '#000000';
+      this.ctx.fillText(
+        this.pieceTable[this.fenLetter],
         this.x * this.squareSize + this.offset.x,
         this.y * this.squareSize + this.offset.y
       );

@@ -1,5 +1,6 @@
 import Piece from './Piece.js';
 import Square from './Square.js';
+import Rules from '../mixins/Rules.js';
 
 export default class Board {
   constructor(canvas, ctx) {
@@ -14,13 +15,15 @@ export default class Board {
     // this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
     this.board = [];
     this.pieces = [];
+    this.squares = [];
     this.draggablePiece;
     this.squareSize = 70;
     this.palettes = {
       brown: {white: '#ddbc93', black: '#955431'},
-      green: {white: '#eeeed2', black: '#769655'}
+      green: {white: '#eeeed2', black: '#769655'},
+      grey: {white: '#e7eaef', black: '#7b8697'}
     }
-    this.colors = this.palettes.green;
+    this.colors = this.palettes.grey;
     this.pieceTable = {
       k: '\u{265A}',
       q: '\u{265B}',
@@ -29,19 +32,19 @@ export default class Board {
       n: '\u{265E}',
       p: '\u{265F}'
     }
+    this.rules = new Rules();
     this.canvas.onmousedown = this.selectPieceToMove
     this.canvas.onmousemove = this.dragPiece
     this.canvas.onmouseup = this.dropPiece
   }
 
   initialize() {
-    this.board = [];
-    this.fen.split('/').forEach((rank, y) => {
+    this.board = this.fen.split('/').map((rank, y) => {
       let newRank = [];
       rank.split('').forEach((square, x) => {
         if (x < 8) {
           if (!isNaN(square)) {
-            for(let k = 0; k < square; k++) {
+            for(let i = 0; i < square; i++) {
               newRank.push('');
             }
             return;
@@ -49,26 +52,27 @@ export default class Board {
           newRank.push(square);
         }
       });
-      this.board.push(newRank);
+      return newRank;
     })
     this.draw();
   }
 
   generateSquares() {
-    this.ctx.clearRect(0, 0, 560, 560);
     for (let x = 0; x < 8; x++) {
+      let rank = [];
       for (let y = 0; y < 8; y++) {
         let color = (x + y) % 2 === 0 ? this.colors.white : this.colors.black;
         const square = new Square({x, y, size: this.squareSize, color, ctx: this.ctx});
+        rank.push(square);
         square.draw();
       }
+      this.squares.push(rank);
     }
   }
 
   generatePieces() {
-    this.pieces = [];
     this.ctx.font = '48px serif';
-    this.board.forEach( (rank, y) => {
+    this.pieces = this.board.map( (rank, y) => {
       let newRank = [];
       rank.forEach( (pieceFEN, x) => {
         if (pieceFEN === '') {
@@ -88,7 +92,7 @@ export default class Board {
           newRank.push(piece);
         }
       })
-      this.pieces.push(newRank);
+      return newRank;
     })
   }
 
@@ -114,12 +118,11 @@ export default class Board {
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;
       this.draggablePiece.y = (e.offsetY / 70) - 0.5;
       this.draw();
+      this.rules.checkDiagonals(this.draggablePiece, this.squares, this.pieces);
     }
   }
 
   dropPiece = e => {
-    // TODO:
-    // check if legal move
     if (this.draggablePiece) {
       this.draggablePiece.x = Math.round(this.draggablePiece.x);
       this.draggablePiece.y = Math.round(this.draggablePiece.y);

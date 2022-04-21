@@ -1,21 +1,13 @@
 export default class Rules {
-  constructor(draggablePiece, squares, pieces) {
-    this.draggablePiece = draggablePiece;
-    this.squares = squares;
-    this.pieces = pieces;
-  }
 
-  checkDiagonals(draggablePiece, squares, pieces) {
-    this.draggablePiece = draggablePiece;
-    this.squares = squares;
-    this.pieces = pieces;
+  checkDiagonals = function() {
     this.checkTopLeft();
     this.checkBottomLeft();
     this.checkTopRight();
     this.checkBottomRight();
   }
   
-  checkTopLeft() {
+  checkTopLeft = function() {
     let piecePos = this.draggablePiece.previousPosition
     if (this.draggablePiece && this.draggablePiece.fenLetter.toLowerCase() === 'b') {
       for (let i = 1; piecePos.x - i >= 0 && piecePos.y - i >= 0; i++) {
@@ -31,7 +23,7 @@ export default class Rules {
     }
   }
   
-  checkBottomLeft() {
+  checkBottomLeft = function() {
     let piecePos = this.draggablePiece.previousPosition
     if (this.draggablePiece && this.draggablePiece.fenLetter.toLowerCase() === 'b') {
       for (let i = 1; piecePos.x - i >= 0 && piecePos.y + i <= 7; i++) {
@@ -47,7 +39,7 @@ export default class Rules {
     }
   }
   
-  checkTopRight() {
+  checkTopRight = function() {
     let piecePos = this.draggablePiece.previousPosition
     if (this.draggablePiece && this.draggablePiece.fenLetter.toLowerCase() === 'b') {
       for (let i = 1; piecePos.x + i <= 7 && piecePos.y - i >= 0; i++) {
@@ -63,7 +55,7 @@ export default class Rules {
     }
   }
   
-  checkBottomRight() {
+  checkBottomRight = function() {
     let piecePos = this.draggablePiece.previousPosition
     if (this.draggablePiece && this.draggablePiece.fenLetter.toLowerCase() === 'b') {
       for (let i = 1; piecePos.x + i <= 7 && piecePos.y + i <= 7; i++) {
@@ -79,7 +71,7 @@ export default class Rules {
     }
   }
 
-  displayLegalMove(square) {
+  displayLegalMove = function(square) {
     square.isLegalSquare = true;
     square.draw();
   }

@@ -1,6 +1,5 @@
 import Piece from './Piece.js';
 import Square from './Square.js';
-import Rules from '../mixins/Rules.js';
 
 export default class Board {
   constructor(canvas, ctx) {
@@ -32,7 +31,6 @@ export default class Board {
       n: '\u{265E}',
       p: '\u{265F}'
     }
-    this.rules = new Rules();
     this.canvas.onmousedown = this.selectPieceToMove
     this.canvas.onmousemove = this.dragPiece
     this.canvas.onmouseup = this.dropPiece
@@ -118,7 +116,7 @@ export default class Board {
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;
       this.draggablePiece.y = (e.offsetY / 70) - 0.5;
       this.draw();
-      this.rules.checkDiagonals(this.draggablePiece, this.squares, this.pieces);
+      this.checkDiagonals();
     }
   }
 

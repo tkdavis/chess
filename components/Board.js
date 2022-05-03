@@ -9,9 +9,9 @@ export default class Board {
     *  Uses FEN
     *  https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     */
-    this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    // this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1";
     // this.fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
-    // this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
+    this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
     this.board = [];
     this.pieces = [];
     this.squares = [];
@@ -94,6 +94,14 @@ export default class Board {
     })
   }
 
+  resetLegalSquares() {
+    this.squares.forEach(rank => {
+      rank.forEach(square => {
+        square.isLegalSquare = false;
+      })
+    })
+  }
+
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.generateSquares();
@@ -116,17 +124,32 @@ export default class Board {
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;
       this.draggablePiece.y = (e.offsetY / 70) - 0.5;
       this.draw();
-      this.checkDiagonals();
+      if (this.draggablePiece.fenLetter.toLowerCase() === 'b') {
+        this.checkDiagonals();
+      }
+      if (this.draggablePiece.fenLetter.toLowerCase() === 'q') {
+        this.checkHorizontal();
+        this.checkVertical();
+        this.checkDiagonals();
+      }
     }
   }
 
   dropPiece = e => {
-    if (this.draggablePiece) {
-      this.draggablePiece.x = Math.round(this.draggablePiece.x);
-      this.draggablePiece.y = Math.round(this.draggablePiece.y);
+    const dropX = Math.round(this.draggablePiece.x);
+    const dropY = Math.round(this.draggablePiece.y);
+    const prevX = this.draggablePiece.previousPosition.x;
+    const prevY = this.draggablePiece.previousPosition.y;
+    let square = this.squares[dropX][dropY];
+    if (square.isLegalSquare) {
+      this.draggablePiece.x = dropX;
+      this.draggablePiece.y = dropY;
       this.board[this.draggablePiece.y][this.draggablePiece.x] = this.draggablePiece.fenLetter;
-      this.draw();
-      this.draggablePiece = '';
+    } else {
+      this.board[prevY][prevX] = this.draggablePiece.fenLetter;
     }
+    this.draggablePiece = '';
+    this.draw();
+    this.resetLegalSquares();
   }
 }

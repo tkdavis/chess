@@ -13,6 +13,8 @@ export default class Square {
       this.ctx.lineWidth = 3;
       this.ctx.strokeStyle = '#4fc582';
       this.ctx.strokeRect(this.x * this.size, this.y * this.size, this.size, this.size);
+      this.ctx.fillStyle = '#4fc58250';
+      this.ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);
     } else {
       this.ctx.fillStyle = this.color;
       this.ctx.fillRect(this.x * this.size, this.y * this.size, this.size, this.size);

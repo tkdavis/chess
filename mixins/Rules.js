@@ -27,8 +27,6 @@ export default class Rules {
   }
   
   checkHorizontal = function() {
-    this.checkLeft();
-    this.checkRight();
     this.checkDirection('left', 'x', -1);
     this.checkDirection('right', 'x');
   }

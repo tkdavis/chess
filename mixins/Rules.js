@@ -8,7 +8,13 @@ export default class Rules {
       bottomRight:  piecePos.x + counter <= 7 && piecePos.y + counter <= 7,
       topRight: piecePos.x + counter <= 7 && piecePos.y - counter >= 0,
       bottomLeft: piecePos.x - counter >= 0 && piecePos.y + counter <= 7,
-      topLeft: piecePos.x - counter >= 0 && piecePos.y - counter >= 0
+      topLeft: piecePos.x - counter >= 0 && piecePos.y - counter >= 0,
+      upTwo: piecePos.y - counter >= 4,
+      downTwo: piecePos.y + counter <= 3,
+      upOne: counter === 1,
+      downOne: counter === 1,
+      topRightOne: counter === 1,
+      topLeftOne: counter === 1
     }
 
     return directionBounds[direction];
@@ -18,7 +24,7 @@ export default class Rules {
     this.checkDirection('topLeft', 'both', -1, -1);
     this.checkDirection('bottomLeft', 'both', -1);
     this.checkDirection('topRight', 'both', 1, -1);
-    this.checkDirection('bottomRight', 'both');
+    this.checkDirection('bottomRight', 'both'); 
   }
 
   checkVertical = function() {
@@ -29,6 +35,23 @@ export default class Rules {
   checkHorizontal = function() {
     this.checkDirection('left', 'x', -1);
     this.checkDirection('right', 'x');
+  }
+
+  checkForwardPawn = function() {
+    if (this.draggablePiece.color === 'white') {
+      this.checkDirection('upTwo', 'y', 1, -1);
+      this.checkDirection('upOne', 'y', 1, -1);
+    } else {
+      this.checkDirection('downTwo', 'y');
+      this.checkDirection('downOne', 'y');
+    }
+  }
+
+  checkPawnDiagonals = function() {
+    if (this.draggablePiece.color === 'white') {
+      this.checkDirection('topRightOne', 'both', 1, -1);
+      this.checkDirection('topLeftOne', 'both', -1, -1);
+    }
   }
 
   checkDirection = function(direction, axis, xSign = 1, ySign = 1) {

@@ -9,9 +9,9 @@ export default class Board {
     *  Uses FEN
     *  https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
     */
-    // this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 1";
+    this.fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     // this.fen = "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"
-    this.fen = "3k4/5ppp/2q5/3p2r1/8/1Q3P2/P4P1P/3R3K w - - 0 1"
+    // this.fen = "1kkkkk2/3Q4/8/8/8/1Q3P2/P4P1P/3R3K w - - 0 1"
     this.board = [];
     this.pieces = [];
     this.squares = [];
@@ -120,17 +120,23 @@ export default class Board {
   }
 
   dragPiece = e => {
+    let pieceType = this.draggablePiece.fenLetter.toLowerCase();
     if (this.draggablePiece) {
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;
       this.draggablePiece.y = (e.offsetY / 70) - 0.5;
       this.draw();
-      if (this.draggablePiece.fenLetter.toLowerCase() === 'b') {
+      if (pieceType === 'b') {
         this.checkDiagonals();
-      }
-      if (this.draggablePiece.fenLetter.toLowerCase() === 'q') {
+      } else if (pieceType === 'q') {
         this.checkHorizontal();
         this.checkVertical();
         this.checkDiagonals();
+      } else if (pieceType === 'r') {
+        this.checkHorizontal();
+        this.checkVertical();
+      } else if (pieceType === 'p') {
+        this.checkForwardPawn();
+        this.checkPawnDiagonals();
       }
     }
   }

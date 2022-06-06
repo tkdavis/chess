@@ -120,6 +120,9 @@ export default class Board {
   }
 
   dragPiece = e => {
+    if (!this.draggablePiece) {
+      return;
+    }
     let pieceType = this.draggablePiece.fenLetter.toLowerCase();
     if (this.draggablePiece) {
       this.draggablePiece.x = (e.offsetX / 70) - 0.5;

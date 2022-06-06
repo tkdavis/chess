@@ -78,6 +78,8 @@ export default class Rules {
         } else if (pieceByAxis) {
           this.displayLegalMove(squaresByAxis[axis]);
           break;
+        } else if (!pieceByAxis && direction === 'topRightOne' || direction === 'topLeftOne') {
+          break;
         }
         this.displayLegalMove(squaresByAxis[axis]);
       }

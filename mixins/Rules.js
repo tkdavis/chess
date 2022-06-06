@@ -11,10 +11,8 @@ export default class Rules {
       topLeft: piecePos.x - counter >= 0 && piecePos.y - counter >= 0,
       upTwo: piecePos.y - counter >= 4,
       downTwo: piecePos.y + counter <= 3,
-      upOne: counter === 1,
-      downOne: counter === 1,
-      topRightOne: counter === 1,
-      topLeftOne: counter === 1
+      pawnForward: counter === 1,
+      pawnDiagonal: counter === 1
     }
 
     return directionBounds[direction];
@@ -40,17 +38,20 @@ export default class Rules {
   checkForwardPawn = function() {
     if (this.draggablePiece.color === 'white') {
       this.checkDirection('upTwo', 'y', 1, -1);
-      this.checkDirection('upOne', 'y', 1, -1);
+      this.checkDirection('pawnForward', 'y', 1, -1);
     } else {
       this.checkDirection('downTwo', 'y');
-      this.checkDirection('downOne', 'y');
+      this.checkDirection('pawnForward', 'y');
     }
   }
 
   checkPawnDiagonals = function() {
     if (this.draggablePiece.color === 'white') {
-      this.checkDirection('topRightOne', 'both', 1, -1);
-      this.checkDirection('topLeftOne', 'both', -1, -1);
+      this.checkDirection('pawnDiagonal', 'both', 1, -1);
+      this.checkDirection('pawnDiagonal', 'both', -1, -1);
+    } else {
+      this.checkDirection('pawnDiagonal', 'both', 1, 1);
+      this.checkDirection('pawnDiagonal', 'both', -1, 1);
     }
   }
 
@@ -78,7 +79,7 @@ export default class Rules {
         } else if (pieceByAxis) {
           this.displayLegalMove(squaresByAxis[axis]);
           break;
-        } else if (!pieceByAxis && direction === 'topRightOne' || direction === 'topLeftOne') {
+        } else if (!pieceByAxis && direction === 'pawnDiagonal') {
           break;
         }
         this.displayLegalMove(squaresByAxis[axis]);
